@@ -53,7 +53,7 @@ public class PlayerMovement : NetworkBehaviour {
 	void OnCol(bool colState) {
 
 		color = new Color (Random.Range (0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f));
-		GetComponent<SpriteRenderer>().color = color;
+		GetComponent<SpriteRenderer>().color = color;//
 
 	}
 }
