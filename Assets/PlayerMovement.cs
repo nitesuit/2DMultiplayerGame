@@ -54,6 +54,7 @@ public class PlayerMovement : NetworkBehaviour {
 
 		color = new Color (Random.Range (0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f));
 		GetComponent<SpriteRenderer>().color = color;//
+		colState = false;
 
 	}
 }
