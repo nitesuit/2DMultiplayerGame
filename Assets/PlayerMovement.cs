@@ -30,6 +30,8 @@ public class PlayerMovement : NetworkBehaviour {
 		
 	void OnCollisionEnter2D(Collision2D coll) {
 
+		if (!isLocalPlayer)
+			return;
 		CmdChangeColor ();
 	}
 
