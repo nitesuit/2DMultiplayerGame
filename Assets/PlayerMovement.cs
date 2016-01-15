@@ -6,9 +6,12 @@ public class PlayerMovement : NetworkBehaviour {
 
 	private Rigidbody2D m_body;
 	public float Speed;
+	[SyncVar] 
+	Color color;
 	// Use this for initialization
 	void Start () {
 	
+		color = GetComponent<SpriteRenderer> ().color;
 		m_body = GetComponent<Rigidbody2D> ();
 
 	}
@@ -22,6 +25,9 @@ public class PlayerMovement : NetworkBehaviour {
 		var x = Input.GetAxis ("Horizontal") * Speed;
 		var y = Input.GetAxis ("Vertical") * Speed;
 		Move (x, y);
+
+		if (GetComponent<SpriteRenderer> ().color != color)
+			GetComponent<SpriteRenderer> ().color = color;
 	}
 
 	void Move(float x, float y) {
@@ -38,6 +44,6 @@ public class PlayerMovement : NetworkBehaviour {
 	[Command]
 	void CmdChangeColor() {
 		
-		GetComponent<SpriteRenderer> ().color = new Color (Random.Range (0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f));
+		color = new Color (Random.Range (0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f));
 	}
 }
