@@ -26,8 +26,11 @@ public class PlayerMovement : NetworkBehaviour {
 		var y = Input.GetAxis ("Vertical") * Speed;
 		Move (x, y);
 
-		if (GetComponent<SpriteRenderer> ().color != color)
-			GetComponent<SpriteRenderer> ().color = color;
+        if (GetComponent<SpriteRenderer>().color != color)
+        {
+            GetComponent<SpriteRenderer>().color = color;
+            SetDirtyBit(1);
+        }
 	}
 
 	void Move(float x, float y) {
