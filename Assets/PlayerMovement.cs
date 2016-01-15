@@ -47,14 +47,13 @@ public class PlayerMovement : NetworkBehaviour {
 	void CmdChangeColor() {
 		
 	//	color = new Color (Random.Range (0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f));
-		colState = true;
+		colState = !colState;
 	}
 
 	void OnCol(bool colState) {
 
 		color = new Color (Random.Range (0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f));
-		GetComponent<SpriteRenderer>().color = color;//
-		colState = false;
+		GetComponent<SpriteRenderer>().color = color;
 
 	}
 }
