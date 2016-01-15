@@ -27,4 +27,15 @@ public class PlayerMovement : NetworkBehaviour {
 	void Move(float x, float y) {
 		m_body.velocity = new Vector2 (x, y);
 	}
+		
+	void OnCollisionEnter2D(Collision2D coll) {
+
+		CmdChangeColor ();
+	}
+
+	[Command]
+	void CmdChangeColor() {
+		
+		GetComponent<SpriteRenderer> ().color = new Color (Random.Range (0.5f, 0.8f), Random.Range (0.5f, 0.8f), Random.Range (0.5f, 0.8f));
+	}
 }
