@@ -6,7 +6,8 @@ public class PlayerMovement : NetworkBehaviour {
 
 	private Rigidbody2D m_body;
 	public float Speed;
-	[SyncVar] 
+	[SyncVar(hook="OnCol")]
+	public bool colState;
 	Color color;
 	// Use this for initialization
 	void Start () {
@@ -28,8 +29,6 @@ public class PlayerMovement : NetworkBehaviour {
 
         if (GetComponent<SpriteRenderer>().color != color)
         {
-            GetComponent<SpriteRenderer>().color = color;
-            SetDirtyBit(1);
         }
 	}
 
@@ -47,6 +46,14 @@ public class PlayerMovement : NetworkBehaviour {
 	[Command]
 	void CmdChangeColor() {
 		
+	//	color = new Color (Random.Range (0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f));
+		colState = true;
+	}
+
+	void OnCol(bool colState) {
+
 		color = new Color (Random.Range (0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f));
+		GetComponent<SpriteRenderer>().color = color;
+
 	}
 }
