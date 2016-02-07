@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
+
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class MoveScript : MonoBehaviour {
+public class MoveScript : NetworkBehaviour {
 
     public float Speed;
     private Rigidbody2D _rb;
@@ -17,6 +19,7 @@ public class MoveScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (!isLocalPlayer) return;
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputY = Input.GetAxisRaw("Vertical");
         Vector2 direction = new Vector2(inputX, inputY).normalized;
