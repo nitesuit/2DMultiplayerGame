@@ -3,8 +3,9 @@ using System.Collections;
 using UnityEngine.Networking;
 
 public class AxeController : NetworkBehaviour {
+    //Viskas blogai
     [SyncVar]
-    private Vector2 _direction;
+    public Vector2 _direction;
     private MoveScript _mover;
 	// Use this for initialization
 	void Start () {
@@ -14,7 +15,7 @@ public class AxeController : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log("the direction: " + _direction);
+        if (!isServer) return;
         if (_direction != Vector2.zero)
         {
             _mover.Move(_direction);
@@ -23,6 +24,13 @@ public class AxeController : NetworkBehaviour {
 
     public void SetDirection(Vector2 direction)
     {
+        if (!isServer) return;
         _direction = direction;
+        //Debug.Log("direction: " + _direction + direction);
+    }
+
+    public Vector2 GetDirection()
+    {
+        return _direction;
     }
 }
