@@ -2,17 +2,20 @@
 using System.Collections;
 using UnityEngine.Networking;
 
+[RequireComponent(typeof(MoveScript),typeof(HealthScript),typeof(Animator))]
 public class PlayerController : NetworkBehaviour {
 
     private Animator _anim;
     private MoveScript _mover;
     private GameObject _axeRes;
+    private HealthScript _health;
     // Use this for initialization
     void Start () {
         _axeRes = Resources.Load("Battle_axe") as GameObject;
         Debug.Log(_axeRes);
         _mover = GetComponent<MoveScript>();
         _anim = GetComponent<Animator>();
+        _health = GetComponent<HealthScript>();
         _anim.SetFloat("SpeedX", 0);
         _anim.SetFloat("SpeedY", -1);
     }
@@ -47,7 +50,8 @@ public class PlayerController : NetworkBehaviour {
     void CmdFire(Vector2 direction)
     {
         GameObject axe = Instantiate(_axeRes, transform.position, transform.rotation) as GameObject;
-        axe.GetComponent<Rigidbody2D>().velocity = direction*6;
+        axe.GetComponent<Rigidbody2D>().velocity = direction * 6;
+        axe.GetComponent<AxeController>().spawnedBy = netId;
 
         NetworkServer.Spawn(axe);
 
@@ -56,5 +60,13 @@ public class PlayerController : NetworkBehaviour {
 
     public void Dummy()
     {
+    }
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag.Equals("Hazard"))
+        {
+            _health.TakeDamage(1);
+        }
     }
 }
