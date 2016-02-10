@@ -9,6 +9,11 @@ public class PlayerController : NetworkBehaviour {
     private MoveScript _mover;
     private GameObject _axeRes;
     private HealthScript _health;
+    private Vector2 _lastDirection = Vector2.down;
+    public float FireRate = 0.1f;
+    private float nextFire = 0;
+    public float axeSpeed = 6;
+    public float axeSpinSpeed = 100;
     // Use this for initialization
     void Start () {
         _axeRes = Resources.Load("Battle_axe") as GameObject;
@@ -21,7 +26,7 @@ public class PlayerController : NetworkBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
         if (!isLocalPlayer) return;
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputY = Input.GetAxisRaw("Vertical");
@@ -32,25 +37,44 @@ public class PlayerController : NetworkBehaviour {
         if (direction == Vector2.zero)
         {
             _anim.SetBool("IsMoving", false);
-            direction = new Vector2(_anim.GetFloat("SpeedX"), _anim.GetFloat("SpeedY"));
+            //direction = new Vector2(_anim.GetFloat("SpeedX"), _anim.GetFloat("SpeedY"));
+            direction = _lastDirection;
         }
         else {
+            _lastDirection = direction;
             _anim.SetBool("IsMoving", true);
             _anim.SetFloat("SpeedX", inputX);
             _anim.SetFloat("SpeedY", inputY);
         }
 
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButton("Fire1") && Time.time>nextFire)
         {
+            nextFire = Time.time + FireRate;
             CmdFire(direction);
+
         }
     }
 
     [Command]
     void CmdFire(Vector2 direction)
     {
-        GameObject axe = Instantiate(_axeRes, transform.position, transform.rotation) as GameObject;
-        axe.GetComponent<Rigidbody2D>().velocity = direction * 6;
+        GameObject axe = Instantiate(_axeRes, transform.position + (Vector3)(direction*0.5f), transform.rotation) as GameObject;
+        //axe.GetComponent<Rigidbody2D>().velocity = direction * axeSpeed;
+        //axe.GetComponent<Rigidbody2D>().angularVelocity = axeSpinSpeed;
+
+        var axeRb = axe.GetComponent<Rigidbody2D>();
+        axeRb.velocity = direction * axeSpeed;
+        axeRb.angularVelocity = axeSpinSpeed;
+        if (direction.x >0)
+        {
+            axeRb.angularVelocity *= -1;
+            var axeScale = axe.transform.localScale;
+
+            //NEVEIKIA ANT CLIENT LOCALSCALE SYNC, DARYTI PER SYNCVAR
+            axe.transform.localScale = new Vector3(axeScale.x * -1, axeScale.y, axeScale.z);
+        }
+
+        Debug.Log(direction * axeSpeed);
         axe.GetComponent<AxeController>().spawnedBy = netId;
 
         NetworkServer.Spawn(axe);

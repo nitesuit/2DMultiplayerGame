@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 
+[RequireComponent(typeof(AudioSource),typeof(Rigidbody2D))]
 public class AxeController : NetworkBehaviour {
     //   //Viskas blogai
     //   [SyncVar]
@@ -35,7 +36,7 @@ public class AxeController : NetworkBehaviour {
     //   }
 
     private Rigidbody2D _rb;
-
+    private AudioSource _audio;
     [SyncVar]
     public NetworkInstanceId spawnedBy;
     // Set collider for all clients.
@@ -48,11 +49,14 @@ public class AxeController : NetworkBehaviour {
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _audio = GetComponent<AudioSource>();
     }
 
     public void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.name.Equals(gameObject.name)) return;
+        _audio.Play();
         _rb.velocity = Vector2.zero;
-        Destroy(gameObject,0.1f);
+        Destroy(gameObject,0.15f);
     }
 }
