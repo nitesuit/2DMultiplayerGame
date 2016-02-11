@@ -37,6 +37,7 @@ public class AxeController : NetworkBehaviour {
 
     private Rigidbody2D _rb;
     private AudioSource _audio;
+    public GameObject Effect;
     [SyncVar]
     public NetworkInstanceId spawnedBy;
     // Set collider for all clients.
@@ -55,8 +56,8 @@ public class AxeController : NetworkBehaviour {
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.name.Equals(gameObject.name)) return;
-        _audio.Play();
+        //_audio.Play();
         _rb.velocity = Vector2.zero;
-        Destroy(gameObject,0.15f);
+        Destroy(gameObject,0.05f);
     }
 }

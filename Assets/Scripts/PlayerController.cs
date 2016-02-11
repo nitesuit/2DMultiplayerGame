@@ -10,6 +10,7 @@ public class PlayerController : NetworkBehaviour {
     private GameObject _axeRes;
     private HealthScript _health;
     private Vector2 _lastDirection = Vector2.down;
+    public GameObject BloodSplat;
     public float FireRate = 0.1f;
     private float nextFire = 0;
     public float axeSpeed = 6;
@@ -25,6 +26,18 @@ public class PlayerController : NetworkBehaviour {
         _anim.SetFloat("SpeedY", -1);
     }
 	
+    void Update()
+    {
+        if (!isLocalPlayer) return;
+
+        if (Input.GetButton("Fire1") && Time.time > nextFire)
+        {
+            nextFire = Time.time + FireRate;
+            CmdFire(_lastDirection);
+
+        }
+    }
+
 	// Update is called once per frame
 	void FixedUpdate () {
         if (!isLocalPlayer) return;
@@ -46,26 +59,33 @@ public class PlayerController : NetworkBehaviour {
             _anim.SetFloat("SpeedX", inputX);
             _anim.SetFloat("SpeedY", inputY);
         }
+    }
 
-        if (Input.GetButton("Fire1") && Time.time>nextFire)
+    public void Dummy()
+    {
+    }
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag.Equals("Hazard"))
         {
-            nextFire = Time.time + FireRate;
-            CmdFire(direction);
-
+            _health.TakeDamage(1);
+            CmdSpawnBloodSplat();
         }
     }
+    #region Commands
 
     [Command]
     void CmdFire(Vector2 direction)
     {
-        GameObject axe = Instantiate(_axeRes, transform.position + (Vector3)(direction*0.5f), transform.rotation) as GameObject;
+        GameObject axe = Instantiate(_axeRes, transform.position + (Vector3)(direction * 0.5f), transform.rotation) as GameObject;
         //axe.GetComponent<Rigidbody2D>().velocity = direction * axeSpeed;
         //axe.GetComponent<Rigidbody2D>().angularVelocity = axeSpinSpeed;
 
         var axeRb = axe.GetComponent<Rigidbody2D>();
         axeRb.velocity = direction * axeSpeed;
         axeRb.angularVelocity = axeSpinSpeed;
-        if (direction.x >0)
+        if (direction.x > 0)
         {
             axeRb.angularVelocity *= -1;
             var axeScale = axe.transform.localScale;
@@ -82,15 +102,11 @@ public class PlayerController : NetworkBehaviour {
         Destroy(axe, 2.0f);
     }
 
-    public void Dummy()
+    [Command]
+    void CmdSpawnBloodSplat()
     {
+        GameObject splat = Instantiate(BloodSplat, transform.position,Quaternion.identity) as GameObject;
+        NetworkServer.Spawn(splat);
     }
-
-    public void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag.Equals("Hazard"))
-        {
-            _health.TakeDamage(1);
-        }
-    }
+    #endregion
 }
