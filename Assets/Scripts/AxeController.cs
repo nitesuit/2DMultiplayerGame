@@ -15,8 +15,10 @@ public class AxeController : NetworkBehaviour {
     //}
 
     //// Update is called once per frame
-    //void Update () {
-    //       if (!isServer) return;
+    //void Update()
+    //{
+    //    if (!isLocalPlayer) return;
+    //    GetComponent<Rigidbody2D>().velocity = Vector2.left * 10;
     //       if (_direction != Vector2.zero)
     //       {
     //           _mover.Move(_direction);
@@ -37,7 +39,7 @@ public class AxeController : NetworkBehaviour {
 
     private Rigidbody2D _rb;
     private AudioSource _audio;
-    public GameObject Effect;
+
     [SyncVar]
     public NetworkInstanceId spawnedBy;
     // Set collider for all clients.
